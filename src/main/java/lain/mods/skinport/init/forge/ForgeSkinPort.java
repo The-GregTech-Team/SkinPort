@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.UUID;
+
+import lain.mods.skins.providers.blessingskin.BSCapeProvider;
+import lain.mods.skins.providers.blessingskin.BSSkinProvider;
+import lain.mods.skins.providers.customskinloader.CSLCapeProvider;
+import lain.mods.skins.providers.customskinloader.CSLSkinProvider;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -34,7 +39,7 @@ import lain.mods.skins.providers.UserManagedSkinProvider;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
-@Mod(modid = "skinport", useMetadata = true)
+@Mod(modid = "skinport", useMetadata = true, acceptableRemoteVersions = "*")
 public class ForgeSkinPort
 {
 
@@ -117,10 +122,14 @@ public class ForgeSkinPort
             loadOptions();
 
             Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-            boolean useMojang = config.getBoolean("useMojang", "client", true, "");
+            boolean useMojang = config.getBoolean("useMojang", "client", false, "");
             boolean useCrafatar = config.getBoolean("useCrafatar", "client", true, "");
             boolean useCustomServer = config.getBoolean("useCustomServer", "client", false, "");
+            boolean useCSLServer = config.getBoolean("useCustomSkinLoaderServer", "client", false, "");
+            boolean useBSServer = config.getBoolean("useBSServer", "client", true, "");
             String hostCustomServer = config.getString("hostCustomServer", "client", "http://example.com", "/skins/(uuid|username) and /capes/(uuid|username) will be queried for respective resources");
+            String hostBSServer = config.getString("blessingSkinHost", "client", "http://skin.prinzeugen.net", "/skin/(uuid|username) and /cape/(uuid|username) will be queried for respective resources");
+
             if (config.hasChanged())
                 config.save();
 
@@ -132,6 +141,10 @@ public class ForgeSkinPort
                 SkinProviderAPI.SKIN.registerProvider(new MojangSkinProvider().withFilter(LegacyConversion.createFilter()));
             if (useCrafatar)
                 SkinProviderAPI.SKIN.registerProvider(new CrafatarSkinProvider().withFilter(LegacyConversion.createFilter()));
+            if (useBSServer)
+                SkinProviderAPI.SKIN.registerProvider(new BSSkinProvider().setHost(hostBSServer));
+            if (useCSLServer)
+                SkinProviderAPI.SKIN.registerProvider(new CSLSkinProvider());
             SkinProviderAPI.SKIN.registerProvider(new DefaultSkinProvider());
 
             SkinProviderAPI.CAPE.clearProviders();
@@ -142,6 +155,11 @@ public class ForgeSkinPort
                 SkinProviderAPI.CAPE.registerProvider(new MojangCapeProvider());
             if (useCrafatar)
                 SkinProviderAPI.CAPE.registerProvider(new CrafatarCapeProvider());
+            if (useBSServer)
+                SkinProviderAPI.CAPE.registerProvider(new BSCapeProvider().setHost(hostBSServer));
+            if (useCSLServer)
+                SkinProviderAPI.SKIN.registerProvider(new CSLCapeProvider());
+
         }
 
         network.registerPacket(1, PacketGet0.class);
