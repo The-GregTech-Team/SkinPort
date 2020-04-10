@@ -19,7 +19,6 @@ import lain.mods.skinport.impl.forge.SkinCustomization;
 import lain.mods.skinport.impl.forge.SkinPortGuiCustomizeSkin;
 import lain.mods.skinport.impl.forge.SkinPortModelHumanoidHead;
 import lain.mods.skinport.impl.forge.SkinPortRenderPlayer;
-import lain.mods.skinport.impl.forge.compat.SkinPortRenderPlayer_RPA;
 import lain.mods.skins.api.SkinProviderAPI;
 import lain.mods.skins.api.interfaces.ISkin;
 import lain.mods.skins.impl.PlayerProfile;
@@ -156,16 +155,8 @@ public class ClientProxy extends CommonProxy
 
     public static void setupRenderers(RenderManager manager)
     {
-        if (Loader.isModLoaded("RenderPlayerAPI")) // Compatibility with RenderPlayerAPI
-        {
-            renderers.put("default", new SkinPortRenderPlayer_RPA(manager, false));
-            renderers.put("slim", new SkinPortRenderPlayer_RPA(manager, true));
-        }
-        else
-        {
-            renderers.put("default", new SkinPortRenderPlayer(manager, false));
-            renderers.put("slim", new SkinPortRenderPlayer(manager, true));
-        }
+        renderers.put("default", new SkinPortRenderPlayer(manager, false));
+        renderers.put("slim", new SkinPortRenderPlayer(manager, true));
     }
 
     @SubscribeEvent

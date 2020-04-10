@@ -113,6 +113,7 @@ public class SkinData implements ISkin
 
     private ByteBuffer data;
     private String type;
+    private boolean isDataReady = false;
     private final Collection<Consumer<ISkin>> listeners = new CopyOnWriteArrayList<>();
     private final Collection<Function<ByteBuffer, ByteBuffer>> filters = new CopyOnWriteArrayList<>();
 
@@ -146,6 +147,10 @@ public class SkinData implements ISkin
 
     public synchronized void put(byte[] data, String type)
     {
+        if (isDataReady) {
+            System.out.println("Disallowing overwrite existing skin data");
+            return;
+        }
         ByteBuffer buf = null;
         if (data != null)
         {
@@ -157,6 +162,8 @@ public class SkinData implements ISkin
 
         this.data = buf;
         this.type = type;
+        if (this.isDataReady())
+            isDataReady = true;
     }
 
     @Override

@@ -24,14 +24,13 @@ public class BSCapeProvider implements ISkinProvider {
             skin.setSkinFilter(this._filter);
         }
 
-        if (Shared.isOfflinePlayer(profile.getPlayerID(), profile.getPlayerName()))
-            SharedPool.execute(() -> {
-                Shared.downloadSkin(String.format("%s/cape/%s.png", this._host, profile.getPlayerName()), Runnable::run).thenApply(Optional::get).thenAccept((data) -> {
-                    if (SkinData.validateData(data)) {
-                        skin.put(data, "cape");
-                    }
-                });
+        SharedPool.execute(() -> {
+            Shared.downloadSkin(String.format("%s/cape/%s.png", this._host, profile.getPlayerName()), Runnable::run).thenApply(Optional::get).thenAccept((data) -> {
+                if (SkinData.validateData(data)) {
+                    skin.put(data, "cape");
+                }
             });
+        });
         return skin;
     }
 

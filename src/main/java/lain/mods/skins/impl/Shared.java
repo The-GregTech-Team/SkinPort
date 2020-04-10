@@ -121,7 +121,7 @@ public class Shared
     public static CompletableFuture<Optional<byte[]>> downloadSkin(String resource, Executor executor)
     {
         return SimpleDownloader
-                .start(resource, null, MinecraftUtils.getProxy(), 2, null, executor, null, null, Shared::stopIfHttpClientError)
+                .start(resource, null, MinecraftUtils.getProxy(), 4, null, executor, null, null, Shared::stopIfHttpClientError)
                 .thenApply(Shared::readAndDelete);
     }
 

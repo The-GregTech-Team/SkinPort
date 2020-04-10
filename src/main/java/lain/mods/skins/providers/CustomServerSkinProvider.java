@@ -26,17 +26,17 @@ public class CustomServerSkinProvider implements ISkinProvider
         SharedPool.execute(() -> {
             if (Shared.isOfflinePlayer(profile.getPlayerID(), profile.getPlayerName()))
             {
-                Shared.downloadSkin(String.format("%s/skins/%s", _host, profile.getPlayerName()), Runnable::run).thenApply(Optional::get).thenAccept(data -> {
+                Shared.downloadSkin(String.format("%s/skin/%s.png", _host, profile.getPlayerName()), Runnable::run).thenApply(Optional::get).thenAccept(data -> {
                     if (SkinData.validateData(data))
                         skin.put(data, SkinData.judgeSkinType(data));
                 });
             }
             else
             {
-                Shared.downloadSkin(String.format("%s/skins/%s", _host, profile.getPlayerID()), Runnable::run).handle((r, t) -> {
+                Shared.downloadSkin(String.format("%s/skin/%s.png", _host, profile.getPlayerID()), Runnable::run).handle((r, t) -> {
                     if (r != null && r.isPresent())
                         return CompletableFuture.completedFuture(r);
-                    return Shared.downloadSkin(String.format("%s/skins/%s", _host, profile.getPlayerName()), Runnable::run);
+                    return Shared.downloadSkin(String.format("%s/skin/%s.png", _host, profile.getPlayerName()), Runnable::run);
                 }).thenCompose(Function.identity()).thenApply(Optional::get).thenAccept(data -> {
                     if (SkinData.validateData(data))
                         skin.put(data, SkinData.judgeSkinType(data));

@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinPool.ManagedBlocker;
@@ -117,11 +118,7 @@ public class SkinProviderAPI
                 {
                     key.setUpdateListener(profileChangeListener);
 
-                    return new SkinBundle().set(providers.stream().map(provider -> {
-                        return provider.getSkin(key);
-                    }).filter(skin -> {
-                        return skin != null;
-                    }).collect(Collectors.toCollection(ArrayList::new)));
+                    return new SkinBundle().set(providers.stream().map(provider -> provider.getSkin(key)).filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new)));
                 }
 
                 @Override

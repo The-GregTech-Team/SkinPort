@@ -24,19 +24,18 @@ public class BSSkinProvider implements ISkinProvider {
             skin.setSkinFilter(this._filter);
         }
 
-        if (Shared.isOfflinePlayer(profile.getPlayerID(), profile.getPlayerName()))
-            SharedPool.execute(() -> {
-                Shared.downloadSkin(String.format("%s/skin/%s.png", this._host, profile.getPlayerName()), Runnable::run).thenApply(Optional::get).thenAccept((data) -> {
-                    try {
-                        if (SkinData.validateData(data)) {
-                            skin.put(data, SkinData.judgeSkinType(data));
-                        }
-                    } catch (Throwable t) {
-                        t.printStackTrace();
+        SharedPool.execute(() -> {
+            Shared.downloadSkin(String.format("%s/skin/%s.png", this._host, profile.getPlayerName()), Runnable::run).thenApply(Optional::get).thenAccept((data) -> {
+                try {
+                    if (SkinData.validateData(data)) {
+                        skin.put(data, SkinData.judgeSkinType(data));
                     }
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
 
-                });
             });
+        });
         return skin;
     }
 
